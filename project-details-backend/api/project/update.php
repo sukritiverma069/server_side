@@ -2,9 +2,9 @@
 // required headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
 header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,Origin");
  
 // include database and object files
 include_once '../config/database.php';
@@ -21,9 +21,10 @@ $project = new Project($db);
 $data = json_decode(file_get_contents("php://input"));
  
 // set ID property of project$project to be edited
-$project->projectId = $data->projectId;
+$project->ID = $data->ID;
  
 // set project$project property values
+$project->projectId = $data->projectId;
 $project->cityid = $data->cityid;
 $project->localityid = $data->localityid;
 $project->project_name = $data->project_name;

@@ -5,25 +5,25 @@ header("Content-Type: application/json; charset=UTF-8");
  
 // include database and object files
 include_once '../config/database.php';
-include_once '../objects/project.php';
+include_once '../objects/xid_summary.php';
  
 // instantiate database and project object
 $database = new Database();
 $db = $database->getConnection();
  
 // initialize object
-$project = new Project($db);
+$xid = new Xid($db);
  
 // query projects
-$stmt = $project->read();
+$stmt = $xid->read();
 $num = $stmt->rowCount();
  
 // check if more than 0 record found
 if($num>0){
  
     // projects array
-    $projects_arr=array();
-    $projects_arr["records"]=array();
+    $xids_arr=array();
+    $xids_arr["records"]=array();
  
     // retrieve our table contents
     // fetch() is faster than fetchAll()
@@ -34,26 +34,28 @@ if($num>0){
         // just $name only
         extract($row);
  
-        $project_item=array(
+        $xid_item=array(
             "ID" => $ID,
-            "projectId" => $projectId,
-            "cityid" => $cityid,
-            "localityid" => $localityid,
-            "project_name" => $project_name,
-            "builderid" => $builderid,
-            "builder_name" => $builder_name,
-            "property_type" => $property_type,
-            "construction_status" => $construction_status
+            "PROJECTID" => $PROJECTID,
+            "PROJ_NAME" => $PROJ_NAME,
+            "CITY" => $CITY,
+            "LOCALITY_ID" => $LOCALITY_ID,
+            "BUILDERID" => $BUILDERID,
+            "BUILDERNAME" => $BUILDERNAME,
+            "ENTRY_DT" => $ENTRY_DT,
+            "PROP_TYPE" => $PROP_TYPE,
+            "POSSESSION_TYPE" => $POSSESSION_TYPE
+           
         );
  
-        array_push($projects_arr["records"], $project_item);
+        array_push($xids_arr["records"], $xid_item);
     }
  
     // set response code - 200 OK
     http_response_code(200);
  
     // show projects data in json format
-    echo json_encode($projects_arr);
+    echo json_encode($xids_arr);
 }else{
  
     // set response code - 404 Not found
@@ -64,3 +66,4 @@ if($num>0){
         array("message" => "No projects found.")
     );
 }
+

@@ -2,17 +2,20 @@
 // required headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
- 
+
+
+$table=$_REQUEST['table'];
+
 // include database and object files
 include_once '../config/database.php';
-include_once '../objects/project.php';
+include_once '../objects/project_2.php';
  
 // instantiate database and project object
 $database = new Database();
 $db = $database->getConnection();
  
 // initialize object
-$project = new Project($db);
+$project = new Project($db,$table);
  
 // query projects
 $stmt = $project->read();
@@ -29,23 +32,24 @@ if($num>0){
     // fetch() is faster than fetchAll()
     // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-        // extract row
+        
+        $column_names = array();
+        $column_names=explode(",", $project->table_column_names);
+              // extract row
         // this will make $row['name'] to
         // just $name only
-        extract($row);
- 
-        $project_item=array(
-            "ID" => $ID,
-            "projectId" => $projectId,
-            "cityid" => $cityid,
-            "localityid" => $localityid,
-            "project_name" => $project_name,
-            "builderid" => $builderid,
-            "builder_name" => $builder_name,
-            "property_type" => $property_type,
-            "construction_status" => $construction_status
-        );
- 
+        //extract($row);
+        
+        $array_size = count($column_names);
+        $project_item=array();
+        
+        for($i=0; $i < $array_size;$i++){
+                $project_item[$column_names[$i]]=$row[$column_names[$i]];
+                $project_item["edit"]="edit";
+                $project_item["dropdown"]="dropdown";
+
+          };
+
         array_push($projects_arr["records"], $project_item);
     }
  

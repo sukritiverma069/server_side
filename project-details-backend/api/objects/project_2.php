@@ -4,7 +4,7 @@ class Project  {
  
     // database connection and table name
     private $conn;
-    private $table_name = "project_details";
+    private $table_name ;
 
     
     // object properties
@@ -17,21 +17,69 @@ class Project  {
     public $builder_name;
     public $property_type;
     public $construction_status;
+    public $table_column_names;
  
     // constructor with $db as database connection
-    public function __construct($db){
+    public function __construct($db,$table){
         $this->conn = $db;
+        $this->table_name = $table;
     }
+
+
+function getColumns() {
+    $query =  "SELECT COLUMN_NAME 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_SCHEMA='99acresdb3' 
+        AND 
+        TABLE_NAME='".$this->table_name."'" ;
+
+// prepare query statement
+$stmt = $this->conn->prepare($query);
+
+  // execute query
+  $stmt->execute();
+
+  $num = $stmt->rowCount();
+ // new array which will contain all column names
+ $columns_arr=array();
+// check if more than 0 record found
+
+if($num>0){
+    
+    $index=0;
+    $column_names="";
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+        //echo $row['COLUMN_NAME']."\n";
+        //array_push($columns_arr,$row['COLUMN_NAME']);
+        $column_names=$column_names.$row['COLUMN_NAME'].",";
+    }
+
+$column_names= substr($column_names,0,strlen($column_names)-1);
+$this->table_column_names=$column_names;
+return $column_names;
+}
+
+}
 
     // read projects
 function read(){
- 
+    
+    //echo "going to get column names \n";
+    $cols = $this->getColumns();
+
+    // $column_names=""
+    // for($i=0; $i < count($cols);$i++){
+
+    //     echo "column name = ".$cols[$i]."\n";
+    // }
+    
     // select all query
-    $query = "SELECT ID,projectId,cityid,localityid,project_name,builderid,builder_name,property_type,construction_status 
-            FROM
-                " . $this->table_name ." order by projectid limit 200";
- 
+    $query = "SELECT ".$cols." FROM ".$this->table_name ." limit 200";
+    echo "\n";
+    //echo "going to execute ".$query;
     // prepare query statement
+
+
     $stmt = $this->conn->prepare($query);
  
     // execute query
@@ -50,6 +98,7 @@ function create(){
             projectId=:projectId, cityid=:cityid, localityid=:localityid, project_name=:project_name, builderid=:builderid,builder_name=:builder_name,property_type=:property_type,construction_status=:construction_status";
  
     // prepare query
+    
     $stmt = $this->conn->prepare($query);
  
     // sanitize
