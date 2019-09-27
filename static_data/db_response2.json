@@ -1,0 +1,49 @@
+{
+   "database_response":[
+      {
+         "projectid":241357,
+         "builderid":63911,
+         "projectname":"Silver Arch",
+         "buildername":"GE Construction",
+         "localityid":7502,
+         "locality":"Sector-96 Noida",
+         "entrydate":"2011-11-05"
+      },
+      {
+         "projectid":251257,
+         "builderid":639,
+         "projectname":"Grand City",
+         "buildername":"Prateek",
+         "localityid":75,
+         "locality":"Sector-108 Noida",
+         "entrydate":"2009-11-05"
+      },
+      {
+         "projectid":2417,
+         "builderid":63,
+         "projectname":"Cleo County",
+         "buildername":"Cleo",
+         "localityid":7556,
+         "locality":"Sector-137 Noida",
+         "entrydate":"2007-11-05"
+      },
+      {
+         "projectid":2457,
+         "builderid":6387,
+         "projectname":"Gaur Green City",
+         "buildername":"Gaur",
+         "localityid":250,
+         "locality":"Ghaziabad",
+         "entrydate":"2005-11-05"
+      },
+      {
+         "projectid":395873,
+         "builderid":2363,
+         "projectname":"Golden Palms",
+         "buildername":"IITL",
+         "localityid":1245,
+         "locality":"Sector-168 Noida",
+         "entrydate":"2007-11-05"
+      }
+   ]
+}
