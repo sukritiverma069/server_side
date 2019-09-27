@@ -7,17 +7,10 @@ class Project  {
     private $table_name ;
 
     
-    // object properties
-    public $ID;
-    public $projectId;
-    public $cityid;
-    public $localityid;
-    public $project_name;
-    public $builderid;
-    public $builder_name;
-    public $property_type;
-    public $construction_status;
+    //dynamic variables
     public $table_column_names;
+    public $new_table_row = array();
+    public $updated_table_row = array();
  
     // constructor with $db as database connection
     public function __construct($db,$table){
@@ -91,101 +84,73 @@ function read(){
 // create product
 function create(){
  
+    $cols = "";
+    $placeholders = "";
+
+    foreach ($this->new_table_row as $key => $value) {
+        $cols=$cols.$key.",";
+        $placeholders=$placeholders.":".$key.",";
+       }
+      
+       $cols= substr($cols,0,strlen($cols)-1);
+       $placeholders= substr($placeholders,0,strlen($placeholders)-1);
+    
     // query to insert record
-    $query = "INSERT INTO
-                " . $this->table_name . "
-            SET
-            projectId=:projectId, cityid=:cityid, localityid=:localityid, project_name=:project_name, builderid=:builderid,builder_name=:builder_name,property_type=:property_type,construction_status=:construction_status";
- 
+    $query = "INSERT INTO " . $this->table_name . "(".$cols.")"." VALUES "."(".$placeholders.")";
+       
     // prepare query
-    
     $stmt = $this->conn->prepare($query);
- 
-    // sanitize
-    // $this->name=htmlspecialchars(strip_tags($this->name));
-    // $this->price=htmlspecialchars(strip_tags($this->price));
-    // $this->description=htmlspecialchars(strip_tags($this->description));
-    // $this->category_id=htmlspecialchars(strip_tags($this->category_id));
-    // $this->created=htmlspecialchars(strip_tags($this->created));
- 
-    // bind values
-    $stmt->bindParam(":projectId", $this->projectId);
-    $stmt->bindParam(":cityid", $this->cityid);
-    $stmt->bindParam(":localityid", $this->localityid);
-    $stmt->bindParam(":project_name", $this->project_name);
-    $stmt->bindParam(":builderid", $this->builderid);
-    $stmt->bindParam(":builder_name", $this->builder_name);
-    $stmt->bindParam(":property_type", $this->property_type);
-    $stmt->bindParam(":construction_status", $this->construction_status);
- 
-    // execute query
     
-    if($stmt->execute()){
+    // execute query
+    if($stmt->execute($this->new_table_row)){
         return true;
     }
- 
+    
     return false;
      
 }
 
 // update the product
 function update(){
+
+    $placeholders2 = "";
+
+    foreach ($this->updated_table_row as $key => $value){
+        $placeholders2=$placeholders2.$key."=:".$key.", ";
+
+        }
+       $placeholders2= substr($placeholders2,0,strlen($placeholders2)-2);
  
     // update query
-    $query = "UPDATE
-                " . $this->table_name . "
-            SET
-                cityid = :cityid,
-                localityid = :localityid,
-                construction_status = :construction_status,
-                localityid = :localityid,
-                project_name =:project_name,
-                property_type =:property_type,
-                builder_name =:builder_name,
-                projectId =:projectId
-            WHERE
-            ID = :ID" ;
+    
+   
+    //$query = "UPDATE " . $this->table_name." (".$cols2.")"." VALUES "."(".$placeholders2.") WHERE ID = :ID " ;
+    $query = "UPDATE " . $this->table_name." SET ".$placeholders2." WHERE ID = :ID";
+    //$query = "UPDATE project_details (projectid,cityid,localityid,project_name,builderid,builder_name,construction_status,property_type) VALUES (:projectid,:cityid,:localityid,:project_name,:builderid,:builder_name,:construction_status,:property_type) WHERE ID = :ID";
  
     // prepare query statement
     $stmt = $this->conn->prepare($query);
- 
-    // sanitize
-    // $this->name=htmlspecialchars(strip_tags($this->name));
-    // $this->price=htmlspecialchars(strip_tags($this->price));
-    // $this->description=htmlspecialchars(strip_tags($this->description));
-    // $this->category_id=htmlspecialchars(strip_tags($this->category_id));
-    // $this->id=htmlspecialchars(strip_tags($this->id));
- 
-    // bind new values
-    $stmt->bindParam(':ID', $this->ID);
-    $stmt->bindParam(':cityid', $this->cityid);
-    $stmt->bindParam(':localityid', $this->localityid);
-    $stmt->bindParam(':construction_status', $this->construction_status);
-    $stmt->bindParam(':localityid', $this->localityid);
-    $stmt->bindParam(':project_name', $this->project_name);
-    $stmt->bindParam(':property_type', $this->property_type);
-    $stmt->bindParam(':builder_name', $this->builder_name);
-    $stmt->bindParam(':projectId', $this->projectId);
- 
+
     // execute the query
-    if($stmt->execute()){
+    if($stmt->execute($this->updated_table_row)){
         return true;
     }
  
     return false;
 }
-
+ 
 // delete the product
 function delete(){
  
     // delete query
     $query = "DELETE FROM " . $this->table_name . " WHERE ID = ?";
+    
  
     // prepare query
     $stmt = $this->conn->prepare($query);
  
     // sanitize
-    $this->id=htmlspecialchars(strip_tags($this->ID));
+    $this->ID=htmlspecialchars(strip_tags($this->ID));
  
     // bind id of record to delete
     $stmt->bindParam(1, $this->ID);
